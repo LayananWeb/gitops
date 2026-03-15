@@ -1,0 +1,27 @@
+fullnameOverride: dev-lti
+replicaCount: 1
+image:
+  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/lti-api
+  tag: dev-b8164e2e
+  pullPolicy: IfNotPresent
+service:
+  port: 80
+  targetPort: 8081
+envFromSecret: lti-env-dev
+migrate:
+  enabled: true
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 300
+  command: >-
+    DATABASE_URL="postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE:-disable}"; /app/migrate -path /app/migrations -database "$DATABASE_URL" up
+ingress:
+  enabled: true
+  className: alb
+  scheme: internet-facing
+  targetType: ip
+  host: dev-api-lti.mbugroup.id
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-southeast-3:886436954922:certificate/7c2502fb-3363-488f-9c27-7c2ed3ce07f5"
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/healthcheck-path: "/healthz"

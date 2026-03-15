@@ -1,0 +1,15 @@
+aws_region          = "ap-southeast-3"
+rds_identifier      = "development"
+master_username     = "postgresadmin"
+master_password     = "replace-with-secure-password"
+instance_class      = "db.t4g.micro"
+allocated_storage   = 20
+engine_version      = "16"
+publicly_accessible = true
+allowed_cidr_blocks = ["0.0.0.0/0"]
+
+tags = {
+  Project     = "mbu"
+  ManagedBy   = "terraform"
+  Environment = "development"
+}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: lti
+description: LTI API Helm chart #nama chart (bukan nama deploy).
+type: application
+version: 0.1.0 #naikkan kalau chart berubah
+appVersion: "1.0.0" #versi aplikasi (informasi saja; bisa kamu isi versi app).

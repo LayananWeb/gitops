@@ -1,0 +1,37 @@
+fullnameOverride: dev-mas-presensi
+replicaCount: 1
+image:
+  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/mas-presensi
+  tag: dev-fc9b56fc
+  pullPolicy: Always
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+envFromSecret: presensi-env-dev
+nginx:
+  enabled: false
+app:
+  port: 3000
+migrate:
+  enabled: true
+service:
+  port: 80
+  targetPort: 3000
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: "internet-facing"
+    alb.ingress.kubernetes.io/target-type: "ip"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-southeast-3:886436954922:certificate/cc46e2d6-dfc7-422b-afd1-014517a05281"
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    # gunakan root agar tidak bergantung endpoint API internal yang bisa berubah
+    alb.ingress.kubernetes.io/healthcheck-path: "/"
+    alb.ingress.kubernetes.io/success-codes: "200"
+  hosts:
+    - host: dev-mas-presensi.mbugroup.id
+      paths:
+        - path: /
+          pathType: Prefix

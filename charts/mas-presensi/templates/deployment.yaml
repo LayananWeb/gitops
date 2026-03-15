@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mas-presensi.fullname" . }}
+  labels:
+    {{- include "mas-presensi.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "mas-presensi.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mas-presensi.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: app
+          {{- $probes := .Values.probes | default (dict) }}
+          {{- $probePath := index $probes "path" }}
+          {{- $probeType := index $probes "type" | default "" }}
+          {{- $useHttpProbe := or (eq $probeType "http") (not (empty $probePath)) }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort | default 3000 }}
+
+          {{- if .Values.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.envFromSecret | quote }}
+          {{- end }}
+
+          readinessProbe:
+            {{- if $useHttpProbe }}
+            httpGet:
+              path: {{ default "/" $probePath }}
+              port: http
+            {{- else }}
+            tcpSocket:
+              port: http
+            {{- end }}
+            initialDelaySeconds: {{ default 10 (index $probes "readinessInitialDelaySeconds") }}
+            periodSeconds: {{ default 10 (index $probes "periodSeconds") }}
+            timeoutSeconds: {{ default 2 (index $probes "timeoutSeconds") }}
+            failureThreshold: {{ default 6 (index $probes "failureThreshold") }}
+
+          livenessProbe:
+            {{- if $useHttpProbe }}
+            httpGet:
+              path: {{ default "/" $probePath }}
+              port: http
+            {{- else }}
+            tcpSocket:
+              port: http
+            {{- end }}
+            initialDelaySeconds: {{ default 30 (index $probes "livenessInitialDelaySeconds") }}
+            periodSeconds: {{ default 20 (index $probes "periodSeconds") }}
+            timeoutSeconds: {{ default 2 (index $probes "timeoutSeconds") }}
+            failureThreshold: {{ default 6 (index $probes "failureThreshold") }}

@@ -1,0 +1,35 @@
+{{- if .Values.migrate.enabled -}}
+{{- $tag := required "image.tag is required for migrate job" .Values.image.tag -}}
+{{- $name := printf "%s-migrate-%s" (include "lti.fullname" .) ($tag | replace "." "-" | replace "_" "-" | replace ":" "-" | lower) -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $name | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "lti.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded,HookFailed
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  backoffLimit: {{ .Values.migrate.backoffLimit | default 1 }}
+  ttlSecondsAfterFinished: {{ .Values.migrate.ttlSecondsAfterFinished | default 300 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lti.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ required "image.repository is required for migrate job" .Values.image.repository }}:{{ $tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          command: ["sh", "-lc"]
+          args:
+            - {{ .Values.migrate.command | quote }}
+          {{- if .Values.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.envFromSecret | quote }}
+          {{- end }}
+{{- end -}}

@@ -1,0 +1,32 @@
+replicaCount: 1
+image:
+  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/sso-api
+  tag: prod-bec7da77
+  pullPolicy: IfNotPresent
+service:
+  port: 80
+  targetPort: 7001 # sesuaikan port container SSO kamu
+envFromSecret: sso-env-prod
+redisAlias:
+  enabled: true
+keys:
+  enabled: true
+  secretName: sso-jwt-keys
+  mountPath: /app/internal/config/keys
+ingress:
+  enabled: true
+  className: alb
+  scheme: internet-facing
+  targetType: ip
+  host: api-sso.mbugroup.id
+  listenPorts: '[{"HTTP":80},{"HTTPS":443}]'
+  certificateArn: "arn:aws:acm:ap-southeast-3:886436954922:certificate/61d6aeee-83c3-439a-8d37-eb8196c6766e"
+  sslRedirect: "443"
+
+migrate:
+  enabled: false
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 300
+  command: >-
+    DATABASE_URL="postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE:-disable}";
+    /app/migrate -path /app/migrations -database "$DATABASE_URL" up

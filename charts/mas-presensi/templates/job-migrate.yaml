@@ -1,0 +1,23 @@
+{{- if and .Values.migrate.enabled (.Values.migrate.useMigratorImage | default false) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "mas-presensi.fullname" . }}-migrate-{{ default .Chart.AppVersion .Values.image.tag | replace "." "-" }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded,HookFailed
+spec:
+  backoffLimit: {{ .Values.migrate.backoffLimit | default 2 }}
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:migrator-{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - secretRef:
+                name: presensi-env-dev
+          command: ["sh","-c","{{ .Values.migrate.command }}"]
+{{- end }}

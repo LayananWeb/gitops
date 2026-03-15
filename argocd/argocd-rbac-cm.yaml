@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: argocd
+data:
+  # default untuk user yang tidak ke-map role apa pun
+  policy.default: role:readonly
+  policy.matchMode: glob
+  scopes: '[groups]'
+
+  policy.csv: |
+    #########################################################
+    # ROLE: developer
+    # - boleh: lihat/list, sync
+    # - tidak boleh: update/edit, delete
+    #########################################################
+
+    # Applications
+    p, role:developer, applications, get, */*, allow
+    p, role:developer, applications, list, */*, allow
+    p, role:developer, applications, sync, */*, allow
+    p, role:developer, applications, update, */*, deny
+    p, role:developer, applications, delete, */*, deny
+
+    # Logs & repo read
+    p, role:developer, logs, get, */*, allow
+    p, role:developer, repositories, get, *, allow
+
+    # (opsional) biar bisa lihat cluster info
+    p, role:developer, clusters, get, *, allow
+
+    #########################################################
+    # USER MAPPING (LOCAL USER)
+    # - user "developer1" akan dapat role developer
+    #########################################################
+    g, developer1, role:developer

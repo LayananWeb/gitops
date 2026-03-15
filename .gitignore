@@ -1,0 +1,6 @@
+.DS_Store
+
+# Terraform local artifacts
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.backup

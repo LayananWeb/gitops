@@ -1,0 +1,9 @@
+resources:
+  - external-secrets/externalsecret-sso-env.yaml
+
+helmCharts:
+  - name: sso
+    releaseName: prod-sso
+    namespace: prod-sso
+    repo: file://../../../charts
+    valuesFile: sso-values-prod.yaml

@@ -1,0 +1,19 @@
+replicaCount: 1
+
+image:
+  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/redis
+  tag: 7-alpine
+  pullPolicy: Always
+
+auth:
+  enabled: false
+  password: ""
+
+serviceAccount:
+  create: false
+  name: ""
+  annotations: {}
+
+persistence:
+  enabled: true
+  size: 5Gi

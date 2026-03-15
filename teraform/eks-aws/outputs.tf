@@ -1,0 +1,23 @@
+output "cluster_name" {
+  value = aws_eks_cluster.this.name
+}
+
+output "cluster_endpoint" {
+  value = aws_eks_cluster.this.endpoint
+}
+
+output "cluster_security_group_id" {
+  value = aws_security_group.eks_cluster.id
+}
+
+output "vpc_id" {
+  value = aws_vpc.this.id
+}
+
+output "private_subnet_ids" {
+  value = aws_subnet.private[*].id
+}
+
+output "public_subnet_ids" {
+  value = aws_subnet.public[*].id
+}

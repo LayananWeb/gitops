@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mas-presensi-prod
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prod-presensi
+
+  sources:
+    # 1) Helm chart
+    - repoURL: https://gitlab.com/cristian.anggita.parjaman/gitops.git
+      targetRevision: main
+      path: charts/mas-presensi
+      helm:
+        releaseName: prod-presensi
+        valueFiles:
+          - $values/environments/mas-presensi/prod/mas-presensi-values-prod.yaml
+
+    # 2) values ref
+    - repoURL: https://gitlab.com/cristian.anggita.parjaman/gitops.git
+      targetRevision: main
+      ref: values
+
+    # 3) ExternalSecret (plain manifests)
+    - repoURL: https://gitlab.com/cristian.anggita.parjaman/gitops.git
+      targetRevision: main
+      path: environments/mas-presensi/prod/external-secrets
+      directory:
+        recurse: true
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true

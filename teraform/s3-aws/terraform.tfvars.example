@@ -1,0 +1,8 @@
+aws_region  = "ap-southeast-3"
+bucket_name = "mbu-eks-assets"
+
+tags = {
+  Project     = "mbu"
+  ManagedBy   = "terraform"
+  Environment = "production"
+}

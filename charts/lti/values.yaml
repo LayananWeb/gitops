@@ -1,0 +1,62 @@
+replicaCount: 1
+
+image:
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8081   # ✅ LTI listen port
+
+envFromSecret: ""    # contoh: lti-env
+
+ingress:
+  enabled: true
+  className: alb
+  scheme: internet-facing
+  targetType: ip
+  host: ""
+  annotations: {}
+
+startupProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  periodSeconds: 5
+  failureThreshold: 60   # 60*5 = 300 detik (5 menit) waktu startup
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  initialDelaySeconds: 30  # Memberi waktu aplikasi untuk "bangun" sebelum Kubernetes mulai mengecek kesehatannya
+  periodSeconds: 10       # Opsional: seberapa sering probe dilakukan
+  failureThreshold: 6
+
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 6
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+httpRoute:
+  enabled: false
+
+migrate:
+  enabled: false
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 300
+  command: >-
+    DATABASE_URL="postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE:-disable}";
+    /app/migrate -path /app/migrations -database "$DATABASE_URL" up

@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/redis
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 6379
+
+resources: {}
+
+auth:
+  enabled: false
+  password: ""
+
+persistence:
+  enabled: false
+  size: 1Gi
