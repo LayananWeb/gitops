@@ -1,7 +1,7 @@
 fullnameOverride: mas-presensi
 replicaCount: 1
 image:
-  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/mas-presensi
+  repository: 123456789012.dkr.ecr.ap-southeast-3.amazonaws.com/example/mas-presensi
   tag: prod-c7fb46de
   pullPolicy: IfNotPresent
 service:
@@ -22,12 +22,12 @@ ingress:
     alb.ingress.kubernetes.io/scheme: "internet-facing"
     alb.ingress.kubernetes.io/target-type: "ip"
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-southeast-3:886436954922:certificate/f612e1b8-7efe-46a3-bbd0-c34a2d435b95"
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-southeast-3:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/healthcheck-path: "/"
     alb.ingress.kubernetes.io/success-codes: "200"
   hosts:
-    - host: mas-presensi.mbugroup.id
+    - host: mas-presensi.example.com
       paths:
         - path: /
           pathType: Prefix

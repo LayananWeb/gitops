@@ -35,6 +35,6 @@ data:
 
     #########################################################
     # USER MAPPING (LOCAL USER)
-    # - user "developer1" akan dapat role developer
+    # - user "example-developer" akan dapat role developer
     #########################################################
-    g, developer1, role:developer
+    g, example-developer, role:developer

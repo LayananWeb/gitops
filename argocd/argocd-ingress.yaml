@@ -8,12 +8,12 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-3:886436954922:certificate/2436c3d5-4c54-4972-9356-b2eef9521b9b
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-3:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     alb.ingress.kubernetes.io/ssl-redirect: "443"
 spec:
   ingressClassName: alb
   rules:
-    - host: argocd.mbugroup.id
+    - host: argocd.example.com
       http:
         paths:
           - path: /

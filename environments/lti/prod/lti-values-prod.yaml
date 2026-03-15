@@ -1,7 +1,7 @@
 fullnameOverride: prod-lti
 replicaCount: 1
 image:
-  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/lti-api
+  repository: 123456789012.dkr.ecr.ap-southeast-3.amazonaws.com/example/lti-api
   tag: prod-c9fb4077
   pullPolicy: IfNotPresent
 service:
@@ -19,9 +19,9 @@ ingress:
   className: alb
   scheme: internet-facing
   targetType: ip
-  host: api-lti.mbugroup.id
+  host: api-lti.example.com
   annotations:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-southeast-3:886436954922:certificate/b64fabe0-86fe-4f22-8729-38226747ab8d"
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:ap-southeast-3:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/healthcheck-path: "/healthz"

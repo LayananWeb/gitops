@@ -1,6 +1,6 @@
 replicaCount: 1
 image:
-  repository: 886436954922.dkr.ecr.ap-southeast-3.amazonaws.com/mbugroup/sso-api
+  repository: 123456789012.dkr.ecr.ap-southeast-3.amazonaws.com/example/sso-api
   tag: prod-bec7da77
   pullPolicy: IfNotPresent
 service:
@@ -18,9 +18,9 @@ ingress:
   className: alb
   scheme: internet-facing
   targetType: ip
-  host: api-sso.mbugroup.id
+  host: api-sso.example.com
   listenPorts: '[{"HTTP":80},{"HTTPS":443}]'
-  certificateArn: "arn:aws:acm:ap-southeast-3:886436954922:certificate/61d6aeee-83c3-439a-8d37-eb8196c6766e"
+  certificateArn: "arn:aws:acm:ap-southeast-3:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   sslRedirect: "443"
 
 migrate:
